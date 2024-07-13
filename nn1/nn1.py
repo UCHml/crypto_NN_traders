@@ -17,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, LSTM
+from tensorflow.keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, MaxPooling1D, Flatten, Activation
 
 # For PLotting we will use these library
 
@@ -86,23 +86,22 @@ model.add(MaxPooling1D(pool_size=2))
 model.add(Conv1D(filters=32, kernel_size=3, padding="same", activation="relu"))
 model.add(MaxPooling1D(pool_size=2))
 model.add(Dropout(0.2))
-model.add(Flatten())
 
 # First LSTM layer to capture trends
 model.add(LSTM(50, return_sequences=True))
 model.add(Dropout(0.2))
 
 # Second LSTM layer to capture trends
-model.add(LSTM(50, return_sequences=True))
+model.add(LSTM(50, return_sequences=False))
 model.add(Dropout(0.2))
 
 # Output
-model.add(TimeDistributed(Dense(1)))
+model.add(Dense(1))
 
 model.compile(loss="mean_squared_error", optimizer="adam")
 
 # Model training
-history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=200, batch_size=32, verbose=1)
+history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100, batch_size=32, verbose=1)
 
 # Plotting Loss vs Validation loss
 loss = history.history['loss']
